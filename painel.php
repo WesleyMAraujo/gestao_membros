@@ -8,7 +8,9 @@ $dadoss = $sql_executar_membros->fetch_assoc();
 
 if ($dadoss['tipo'] == 2) {
     header("Location:painel-membro.php");
-} 
+} elseif ($dadoss['tipo'] == 0) {
+    header("Location: login.php");
+}
 
 ?>
 
@@ -153,6 +155,12 @@ if ($dadoss['tipo'] == 2) {
                                         </li>
                                     </ul>
                                     
+                                    <form style="padding: 10px;" action="removermembro.php" method="post">
+                                    
+                                    <input type="hidden" name="remover" value="<?php echo $CPF?>">
+                                    <button  type="submit" class="btn btn-primary">Remover membro</button>
+
+                                    </form>
 
                                     <div class="dropdown">
                                         <button style="padding: 10px;" class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -249,6 +257,7 @@ if ($dadoss['tipo'] == 2) {
                                     </p>
                                 </li>
                             </ul>
+
                             <input type="submit" value="Enviar">
 
 
