@@ -9,7 +9,9 @@ $dadoss = $sql_executar_membros->fetch_assoc();
 
 if ($dadoss['tipo'] == 1) {
     header("Location:painel.php");
-} 
+} elseif ($dadoss['tipo'] == 0) {
+    header("Location: login.php");
+}
 
 ?>
 
