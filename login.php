@@ -1,50 +1,13 @@
-<?php 
+<?php
 include("conexao.php");
 
-if (isset($_POST["email"]) || isset($_POST["senha"])) { //verifica se o formulario existe
+if ( $_SERVER['REQUEST_METHOD'] == 'POST') { //verifica se o formulario existe
 
-    //impede que caracteres especiais burlem o sistema
-    $email = $mysqli->real_escape_string($_POST["email"]); 
-    $senha = $mysqli->real_escape_string($_POST["senha"]);
-    //
-    $tamanho_email = strlen($email);
-    $tamanho_senha = strlen($senha);
-    if ($tamanho_email == 0 && $tamanho_senha == 0) {
-        echo "Preencha os campos de email e senha";
-        
-    } else if ($tamanho_senha == 0) {
-        echo "O campo de senha esta vazio";
-    } else if ($tamanho_email == 0) {
-        echo "O campo do email esta vazio";
-    } else {
-        $sql_busca_usuario = "SELECT * FROM usuarios WHERE email = '$email' and senha = '$senha'";
-        $sql_executar_busca = $mysqli->query($sql_busca_usuario);
-        $linhas = $sql_executar_busca->num_rows; //se usuario existir atribui 1 se não 0
-        if ($linhas == 1) {
-            $usuario = $sql_executar_busca->fetch_assoc();
-            if (!isset($_SESSION)) {
-                session_start();
-            }
-
-            $_SESSION['email'] = $usuario['email'];
-            $_SESSION['nome'] = $usuario['nome'];
-            $_SESSION['cpf'] = $usuario['cpf'];
-
-
-            if ($usuario['tipo'] == 1) {
-                header("Location: painel.php");
-            } else if ($usuario['tipo'] == 2) {
-                header("Location: painel-membro.php");
-            }
-            
-        } else {
-            echo "Falha ao logar, Email ou senha incorretos";
-        }
-
+    require 'autenticacao.php';
+    if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
+        $erros = checarUsuario($_POST);
     }
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -73,16 +36,18 @@ if (isset($_POST["email"]) || isset($_POST["senha"])) { //verifica se o formular
         <section id="login">
             <h1>Login</h1>
             <form action="" method="post">
-
+                <span class="text-danger"><?= isset($erros['login']) ? $erros['login'] : '' ?></span>
                 <div class="form-group"> <!-- Email -->
                     <label for="email">Endereço de email</label>
                     <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Seu email" name="email">
                     <small id="emailHelp" class="form-text text-muted">Use apenas informações fantasia, não coloque seus dados neste site, é apenas um projeto.</small>
+                    <span class="text-danger"><?= isset($erros['email']) ? $erros['email'] : '' ?></span>
                 </div>
 
                 <div class="form-group"> <!-- Senha -->
                     <label for="senha">Senha</label>
                     <input type="password" class="form-control" id="senha" placeholder="senha" name="senha">
+                    <span class="text-danger"><?= isset($erros['senha']) ? $erros['senha'] : '' ?></span>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Entrar</button><!-- Enviar -->
