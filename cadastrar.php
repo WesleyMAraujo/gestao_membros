@@ -1,47 +1,34 @@
 <?php
 include("conexao.php");
 
-
-
-if (isset($_POST['email']) && isset($_POST['senha']) && isset($_POST['cpf']) && isset($_POST['nascimento']) && isset($_POST['tipo'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $senha = $_POST['senha'];
     $cpf = $_POST['cpf'];
     $aniversario = $_POST['nascimento'];
     $tipo = $_POST['tipo'];
     $nome = $_POST['nomeusuario'];
-   
+
     if (strlen($email) == 0 || strlen($senha) == 0 || strlen($cpf) == 0 || strlen($aniversario) == 0 || strlen($tipo) == 0) {
         echo ("<center><p>PREENCHA OS CAMPOS VAZIOS</p></center>");
     } else {
         $sql_code = $mysqli->query("SELECT * FROM usuarios WHERE cpf = '$cpf' or email = '$email'");
         $dados = $sql_code->fetch_assoc();
 
+        //verifica se o email e a senha ja estão cadastrados
         if ($dados['email'] == $email) {
-            die ("<center><p>O EMAIL JA ESTA EM USO</p></center>");
-        } else if ($dados['cpf'] == $cpf) {
-            die ("<center><p>CPF JA ESTA EM USO</p></center>");
-        } else {
-            /* $mysqli->query("INSERT INTO usuarios VALUES('$nome', '$cpf', '$email' '$senha', '$tipo', '$aniversario')"); */
-            $mysqli->query("INSERT INTO `usuarios`(`nome`, `cpf`, `email`, `senha`, `tipo`, `data_nascimento`) VALUES ('$nome','$cpf','$email','$senha','$tipo','$aniversario')");
-            header("Location:login.php");
+            die("<center><p>O EMAIL JA ESTA EM USO</p></center>");
         }
+        if ($dados['cpf'] == $cpf) {
+            die("<center><p>CPF JA ESTA EM USO</p></center>");
+        }
+        //----------------------------------------------------
+
+        $mysqli->query("INSERT INTO `usuarios`(`nome`, `cpf`, `email`, `senha`, `tipo`, `data_nascimento`) VALUES ('$nome','$cpf','$email','$senha','$tipo','$aniversario')");
+        header("Location:login.php");
     }
 }
 
-
-/* if (isset($_POST['email']) && isset($_POST['senha']) && isset($_POST['cpf']) && isset($_POST['tipo']) && isset($_POST['aniversario'])) {
-    $email = $_POST['email'];
-    $senha = $_POST['senha'];
-    $cpf = $_POST['cpf'];
-    $tipo = $_POST['tipo'];
-    $aniversario = $_POST['aniversario'];
-    echo "chegou rapaziada";
-
-    $mysqli->query("INSERT * INTO usuarios(nome, cpf, email, senha)");
-} else {
-    echo "oxe rapaziada";
-} */
 ?>
 
 <!DOCTYPE html>
@@ -54,7 +41,7 @@ if (isset($_POST['email']) && isset($_POST['senha']) && isset($_POST['cpf']) && 
     <title>Document</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <style>
-        #cadastrar{
+        #cadastrar {
             max-width: 600px;
             margin: auto;
         }
@@ -62,7 +49,7 @@ if (isset($_POST['email']) && isset($_POST['senha']) && isset($_POST['cpf']) && 
 </head>
 
 <body>
-<main>
+    <main>
         <section id="cadastrar">
             <h1>Cadastrar</h1>
             <form action="" method="post">
@@ -100,7 +87,7 @@ if (isset($_POST['email']) && isset($_POST['senha']) && isset($_POST['cpf']) && 
                 <br>
                 <button type="submit" class="btn btn-primary">Cadastrar</button><!-- Enviar -->
                 <button type="submit" class="btn btn-primary"><a href="login.php">Voltar ao login</a></button><!-- Enviar -->
-                
+
             </form>
         </section>
     </main>

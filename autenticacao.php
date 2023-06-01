@@ -1,9 +1,10 @@
 <?php
-include("conexao.php");
 
 function checarUsuario($formulario)
 {
     include("conexao.php");
+
+    //caracteres especiais não afetarão o sistema
     $email = $mysqli->real_escape_string($formulario["email"]);
     $senha = $mysqli->real_escape_string($formulario["senha"]);
 
@@ -46,4 +47,8 @@ function checarUsuario($formulario)
     }
 
     header("Location: painel.php");
+}
+
+function verificar() {
+    include("conexao.php");
 }
