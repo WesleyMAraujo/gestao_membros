@@ -32,11 +32,12 @@ function checarUsuario($formulario)
             session_start();
         }
 
+        //criando as sessoes
         $_SESSION['email'] = $usuario['email'];
         $_SESSION['nome'] = $usuario['nome'];
         $_SESSION['cpf'] = $usuario['cpf'];
 
-
+        
         if ($usuario['tipo'] == 1) {
             header("Location: painel.php");
         } else if ($usuario['tipo'] == 2) {
