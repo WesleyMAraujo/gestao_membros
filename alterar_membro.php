@@ -32,6 +32,7 @@ if (isset($_FILES['novafoto'])) {
         $path = $pasta . $novoNome . "." . $extensao; //recebe a pasta, o novo nome do arquivo e a extensão
         if (move_uploaded_file($arquivo["tmp_name"], $path)) { //move o arquivo para a pasta
             $mysqli->query("UPDATE membros SET foto = '$path', situacao = '$novaSituacao', data_batism_aguas = '$novaDatBatEsp' WHERE gestor = '$gestor' and cpf = '$cpf'");
+            
             if ($dados['tipo'] == 1) {
                 header("Location: painel.php");
             } else {

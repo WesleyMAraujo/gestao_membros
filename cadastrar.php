@@ -1,31 +1,11 @@
 <?php
 include("conexao.php");
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $senha = $_POST['senha'];
-    $cpf = $_POST['cpf'];
-    $aniversario = $_POST['nascimento'];
-    $tipo = $_POST['tipo'];
-    $nome = $_POST['nomeusuario'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') { //verifica se o formulario existe
 
-    if (strlen($email) == 0 || strlen($senha) == 0 || strlen($cpf) == 0 || strlen($aniversario) == 0 || strlen($tipo) == 0) {
-        echo ("<center><p>PREENCHA OS CAMPOS VAZIOS</p></center>");
-    } else {
-        $sql_code = $mysqli->query("SELECT * FROM usuarios WHERE cpf = '$cpf' or email = '$email'");
-        $dados = $sql_code->fetch_assoc();
-
-        //verifica se o email e a senha ja estão cadastrados
-        if ($dados['email'] == $email) {
-            die("<center><p>O EMAIL JA ESTA EM USO</p></center>");
-        }
-        if ($dados['cpf'] == $cpf) {
-            die("<center><p>CPF JA ESTA EM USO</p></center>");
-        }
-        //----------------------------------------------------
-
-        $mysqli->query("INSERT INTO `usuarios`(`nome`, `cpf`, `email`, `senha`, `tipo`, `data_nascimento`) VALUES ('$nome','$cpf','$email','$senha','$tipo','$aniversario')");
-        header("Location:login.php");
+    require 'autenticacao.php';
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $erros = cadastrar($_POST);
     }
 }
 
@@ -55,36 +35,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <form action="" method="post">
 
                 <div class="form-group"> <!-- Email -->
+                    <span class="text-danger"><?= isset($erros['email']) ? $erros['email'] : '' ?></span>
                     <label for="email">Endereço de email</label>
                     <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Seu email" name="email">
                     <small id="emailHelp" class="form-text text-muted">Use apenas informações fantasia, não coloque seus dados neste site, é apenas um projeto.</small>
                 </div>
 
                 <div class="form-group"> <!-- Senha -->
+                    <span class="text-danger"><?= isset($erros['senha']) ? $erros['senha'] : '' ?></span>
                     <label for="senha">Senha</label>
                     <input type="password" class="form-control" id="senha" placeholder="senha" name="senha">
                 </div>
 
                 <div class="form-group"> <!-- CPF -->
+                    <span class="text-danger"><?= isset($erros['cpf']) ? $erros['cpf'] : '' ?></span>
                     <label for="text">Seu CPF</label>
                     <input type="text" class="form-control" id="cpf" placeholder="CPF" name="cpf">
                     <small id="emailHelp" class="form-text text-muted">Use apenas informações fantasia, não coloque seus dados neste site, é apenas um projeto.</small>
                 </div>
 
                 <div class="form-group"> <!-- CPF -->
+                    <span class="text-danger"><?= isset($erros['nome']) ? $erros['nome'] : '' ?></span>
                     <label for="text">Nome de Usuario</label>
                     <input type="text" class="form-control" id="nomeusuario" placeholder="Nome de Usuario" name="nomeusuario">
                     <small id="" class="form-text text-muted">Use apenas informações fantasia, não coloque seus dados neste site, é apenas um projeto.</small>
                 </div>
 
+                <span class="text-danger"><?= isset($erros['aniversario']) ? $erros['aniversario'] : '' ?></span>
                 <label for="nascimento"><strong>Data de nascimento:</strong></label> <br>
                 <input type="date" name="nascimento" id="nascimento">
+
+                <span class="text-danger"><?= isset($erros['tipo']) ? $erros['tipo'] : '' ?></span>
                 <p>Tipo de cadastro</p>
                 <label for="pastor">Pastor</label>
                 <input type="radio" name="tipo" id="pastor" value="1">
                 <label for="membro">Membro</label>
                 <input type="radio" name="tipo" id="membro" value="2">
                 <br>
+                
                 <button type="submit" class="btn btn-primary">Cadastrar</button><!-- Enviar -->
                 <button type="submit" class="btn btn-primary"><a href="login.php">Voltar ao login</a></button><!-- Enviar -->
 

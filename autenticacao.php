@@ -1,5 +1,7 @@
 <?php
 
+
+//checa se o usuario existe no sistema
 function checarUsuario($formulario)
 {
     include("conexao.php");
@@ -11,14 +13,14 @@ function checarUsuario($formulario)
     $tamanho_email = strlen($formulario['email']);
     $tamanho_senha = strlen($formulario['senha']);
 
-     //verifica se os campos de email e senha estão vazios
-     $erros = [];
-     if ($tamanho_email == 0) {
-         $erros['email'] = 'O campo de email esta vazio';
-     } elseif ($tamanho_senha == 0) {
-         $erros['senha'] = 'O campo de senha esta vazio';
-     }
-     //---------------------------------------------------
+    //verifica se os campos de email e senha estão vazios
+    $erros = [];
+    if ($tamanho_email == 0) {
+        $erros['email'] = 'O campo de email esta vazio';
+    } elseif ($tamanho_senha == 0) {
+        $erros['senha'] = 'O campo de senha esta vazio';
+    }
+    //---------------------------------------------------
 
     //caso não tenha erros inicia a verificação do usuario
     if (!empty($erros)) return $erros;
@@ -37,7 +39,7 @@ function checarUsuario($formulario)
         $_SESSION['nome'] = $usuario['nome'];
         $_SESSION['cpf'] = $usuario['cpf'];
 
-        
+
         if ($usuario['tipo'] == 1) {
             header("Location: painel.php");
         } else if ($usuario['tipo'] == 2) {
@@ -50,6 +52,63 @@ function checarUsuario($formulario)
     header("Location: painel.php");
 }
 
-function verificar() {
+
+//função para cadastrar o usuario
+function cadastrar($formulario)
+{
     include("conexao.php");
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $email = $formulario['email'];
+        $senha = $formulario['senha'];
+        $cpf = $formulario['cpf'];
+        $aniversario = $formulario['nascimento'];
+        $tipo = $formulario['tipo'];
+        $nome = $formulario['nomeusuario'];
+
+        $tamanho_email = strlen($email);
+        $tamanho_senha = strlen($senha);
+        $tamanho_nome = strlen($nome);
+        $tamanho_cpf = strlen($cpf);
+        $tamanho_aniversario = strlen($aniversario);
+        $tamanho_tipo = strlen($tipo);
+
+        $erros = [];
+        if ($tamanho_email == 0)
+            $erros['email'] = 'O campo de email esta vazio';
+
+        if ($tamanho_senha == 0)
+            $erros['senha'] = 'O campo de senha esta vazio';
+
+        if ($tamanho_nome == 0)
+            $erros['nome'] = 'O campo de nome esta vazio';
+
+        if ($tamanho_cpf == 0)
+            $erros['cpf'] = 'O campo de cpf esta vazio';
+
+        if ($tamanho_aniversario == 0)
+            $erros['aniversario'] = 'O campo de data de nascimento esta vazio';
+
+        if ($tamanho_tipo == 0)
+            $erros['tipo'] = 'O campo de tipo de cadastro esta vazio';
+
+
+        if (!empty($erros)) return $erros;
+
+
+        $sql_code = $mysqli->query("SELECT * FROM usuarios WHERE cpf = '$cpf' or email = '$email'");
+        $dados = $sql_code->fetch_assoc();
+
+        //verifica se o email e a senha ja estão cadastrados
+        if ($dados['email'] == $email) {
+            die("<center><p>O EMAIL JA ESTA EM USO</p></center>");
+        }
+        if ($dados['cpf'] == $cpf) {
+            die("<center><p>CPF JA ESTA EM USO</p></center>");
+        }
+        //----------------------------------------------------
+
+        $mysqli->query("INSERT INTO `usuarios`(`nome`, `cpf`, `email`, `senha`, `tipo`, `data_nascimento`) VALUES ('$nome','$cpf','$email','$senha','$tipo','$aniversario')");
+        header("Location:login.php");
+    }
 }
