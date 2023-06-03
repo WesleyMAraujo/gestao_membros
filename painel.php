@@ -14,6 +14,9 @@ if ($dadoss['tipo'] == 2) {
 
 ?>
 
+
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -34,7 +37,7 @@ if ($dadoss['tipo'] == 2) {
 
         #lista {
             max-width: 80vw;
-            
+
         }
 
         #cartao {
@@ -154,12 +157,11 @@ if ($dadoss['tipo'] == 2) {
                                             </p>
                                         </li>
                                     </ul>
-                                    
-                                    <form style="padding: 10px;" action="removermembro.php" method="post">
-                                    
-                                    <input type="hidden" name="remover" value="<?php echo $CPF?>">
-                                    <button  type="submit" class="btn btn-primary">Remover membro</button>
 
+                                    <form style="padding: 10px;" action="removermembro.php" method="post">
+                                        <input type="hidden" name="remover" value="<?php echo $CPF ?>">
+                                        <input type="hidden" name="funcao" value = 1>
+                                        <button type="submit" class="btn btn-primary">Remover membro</button>
                                     </form>
 
                                     <div class="dropdown">
@@ -168,28 +170,28 @@ if ($dadoss['tipo'] == 2) {
                                         </button>
                                         <div style="padding: 10px;" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             <form action="alterar_membro.php" enctype="multipart/form-data" method="post">
-                                                <input type="hidden" name="fotoatual" value="<?php echo $foto?>">
-                                                <input type="hidden" name="gestor" value="<?php echo $gestor?>">
-                                                <input type="hidden" name="identificador" value="<?php echo $CPF?>">
+                                                <input type="hidden" name="fotoatual" value="<?php echo $foto ?>">
+                                                <input type="hidden" name="gestor" value="<?php echo $gestor ?>">
+                                                <input type="hidden" name="identificador" value="<?php echo $CPF ?>">
 
                                                 <label for="novafoto"><strong>Nova Foto:</strong></label>
                                                 <input type="file" name="novafoto" id="novafoto"> <br>
 
                                                 <label for="novodatbatism"><strong>Batismo com espirito santo:</strong></label>
-                                                <input type="date" name="novodatbatism" id="novodatbatism" value="<?php echo $data_batismo_esp?>"> <br>
+                                                <input type="date" name="novodatbatism" id="novodatbatism" value="<?php echo $data_batismo_esp ?>"> <br>
 
                                                 <label for=""><strong>Situação:</strong></label>
 
-                                                
-                                                    <label for="1">Em comunhão</label>
-                                                    <input type="radio" name="novasituacao" id="1" value="1" <?php echo ($dados['situacao'] == 1) ? 'checked' : ''; ?>>
-                                                    <label for="2">Em disciplina</label>
-                                                    <input type="radio" name="novasituacao" id="2" value="2" <?php echo ($dados['situacao'] == 2) ? 'checked' : ''; ?>> <br>
-                                                
+
+                                                <label for="1">Em comunhão</label>
+                                                <input type="radio" name="novasituacao" id="1" value="1" <?php echo ($dados['situacao'] == 1) ? 'checked' : ''; ?>>
+                                                <label for="2">Em disciplina</label>
+                                                <input type="radio" name="novasituacao" id="2" value="2" <?php echo ($dados['situacao'] == 2) ? 'checked' : ''; ?>> <br>
+
 
                                                 <input type="submit" value="Atualizar">
 
-                            
+
                                             </form>
                                         </div>
                                     </div>
@@ -204,6 +206,7 @@ if ($dadoss['tipo'] == 2) {
                         <!-- DIGITAR AS LINHAS AQUI -->
                         <form action="adicionar_membro.php" method="post" enctype="multipart/form-data">
                             <ul>
+                                <span class="text-danger"><?= isset($erros['foto']) ? $erros['foto'] : '' ?></span>
                                 <li>
                                     <label for="foto"><strong>Foto 3x4:</strong></label>
                                     <input type="file" name="foto" id="foto">
@@ -281,5 +284,54 @@ if ($dadoss['tipo'] == 2) {
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verifique se há uma seleção de aba armazenada no localStorage
+        var selecaoAba = localStorage.getItem('selecaoAba');
+
+        // Ativar a aba selecionada, se existir
+        if (selecaoAba) {
+            var abaAtiva = document.querySelector(selecaoAba);
+            if (abaAtiva) {
+                abaAtiva.classList.add('active');
+                var conteudoAtivo = document.querySelector(abaAtiva.getAttribute('href'));
+                if (conteudoAtivo) {
+                    conteudoAtivo.classList.add('show', 'active');
+                }
+            }
+        }
+
+        // Armazenar a seleção da aba quando ela for clicada
+        var abas = document.querySelectorAll('.nav-link');
+        abas.forEach(function(aba) {
+            aba.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                // Remover classes 'active' e 'show' de todas as abas e conteúdos
+                abas.forEach(function(aba) {
+                    aba.classList.remove('active');
+                });
+
+                var conteudos = document.querySelectorAll('.tab-pane');
+                conteudos.forEach(function(conteudo) {
+                    conteudo.classList.remove('active', 'show');
+                });
+
+                // Adicionar classes 'active' e 'show' à aba e ao conteúdo selecionados
+                this.classList.add('active');
+                var conteudoSelecionado = document.querySelector(this.getAttribute('href'));
+                if (conteudoSelecionado) {
+                    conteudoSelecionado.classList.add('show', 'active');
+                }
+
+                // Armazenar a seleção da aba no localStorage
+                var selecaoAbaId = '#' + this.getAttribute('id');
+                localStorage.setItem('selecaoAba', selecaoAbaId);
+            });
+        });
+    });
+</script>
+
 
 </html>
