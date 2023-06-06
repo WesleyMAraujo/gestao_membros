@@ -67,8 +67,14 @@ function cadastrar($formulario)
         $senha = $formulario['senha'];
         $cpf = $formulario['cpf'];
         $aniversario = $formulario['nascimento'];
-        $tipo = $formulario['tipo'];
         $nome = $formulario['nomeusuario'];
+
+        if (isset($formulario['tipo'])) {
+            $tipo = $formulario['tipo'];
+        } else {
+            $tipo = '';
+        }
+
 
         $tamanho_email = strlen($email);
         $tamanho_senha = strlen($senha);
@@ -78,17 +84,30 @@ function cadastrar($formulario)
         $tamanho_tipo = strlen($tipo);
 
         $erros = [];
-        if ($tamanho_email == 0)
+        if ($tamanho_email == 0) {
             $erros['email'] = 'O campo de email esta vazio';
-
+        } else {
+            $query = "SELECT * FROM usuarios WHERE email = '$email'";
+            $sql_query = $mysqli->query($query);
+            if ($sql_query->num_rows > 0)
+                $erros['email'] = 'Este email ja esta em uso';
+        }
         if ($tamanho_senha == 0)
             $erros['senha'] = 'O campo de senha esta vazio';
 
         if ($tamanho_nome == 0)
             $erros['nome'] = 'O campo de nome esta vazio';
 
-        if ($tamanho_cpf == 0)
+        if ($tamanho_cpf == 0) {
             $erros['cpf'] = 'O campo de cpf esta vazio';
+        } else {
+            $query = "SELECT * FROM usuarios WHERE cpf = '$cpf'";
+            $sql_query = $mysqli->query($query);
+            if ($sql_query->num_rows > 0)
+                $erros['cpf'] = 'Este cpf ja esta em uso';
+        }
+
+
 
         if ($tamanho_aniversario == 0)
             $erros['aniversario'] = 'O campo de data de nascimento esta vazio';
@@ -96,23 +115,11 @@ function cadastrar($formulario)
         if ($tamanho_tipo == 0)
             $erros['tipo'] = 'O campo de tipo de cadastro esta vazio';
 
-
         if (!empty($erros)) return $erros;
 
-
-        $sql_code = $mysqli->query("SELECT * FROM usuarios WHERE cpf = '$cpf' or email = '$email'");
-        $dados = $sql_code->fetch_assoc();
-
-        //verifica se o email e a senha ja estão cadastrados
-        if ($dados['email'] == $email) {
-            die("<center><p>O EMAIL JA ESTA EM USO</p></center>");
+        if (false == isset($erros[0])) {
+            $mysqli->query("INSERT INTO `usuarios`(`nome`, `cpf`, `email`, `senha`, `tipo`, `data_nascimento`) VALUES ('$nome','$cpf','$email','$senha','$tipo','$aniversario')");
+            header("Location:login.php");
         }
-        if ($dados['cpf'] == $cpf) {
-            die("<center><p>CPF JA ESTA EM USO</p></center>");
-        }
-        //----------------------------------------------------
-
-        $mysqli->query("INSERT INTO `usuarios`(`nome`, `cpf`, `email`, `senha`, `tipo`, `data_nascimento`) VALUES ('$nome','$cpf','$email','$senha','$tipo','$aniversario')");
-        header("Location:login.php");
     }
 }

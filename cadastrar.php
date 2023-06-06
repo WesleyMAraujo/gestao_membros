@@ -34,37 +34,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //verifica se o formulario existe
             <h1>Cadastrar</h1>
             <form action="" method="post">
 
+                <span class="text-danger"><?= isset($erros['email']) ? $erros['email'] : '' ?></span>
                 <div class="form-group"> <!-- Email -->
-                    <span class="text-danger"><?= isset($erros['email']) ? $erros['email'] : '' ?></span>
                     <label for="email">Endereço de email</label>
                     <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Seu email" name="email">
                     <small id="emailHelp" class="form-text text-muted">Use apenas informações fantasia, não coloque seus dados neste site, é apenas um projeto.</small>
                 </div>
 
+                <span class="text-danger"><?= isset($erros['senha']) ? $erros['senha'] : '' ?></span>
                 <div class="form-group"> <!-- Senha -->
-                    <span class="text-danger"><?= isset($erros['senha']) ? $erros['senha'] : '' ?></span>
                     <label for="senha">Senha</label>
                     <input type="password" class="form-control" id="senha" placeholder="senha" name="senha">
                 </div>
 
+                <span class="text-danger"><?= isset($erros['cpf']) ? $erros['cpf'] : '' ?></span>
                 <div class="form-group"> <!-- CPF -->
-                    <span class="text-danger"><?= isset($erros['cpf']) ? $erros['cpf'] : '' ?></span>
                     <label for="text">Seu CPF</label>
                     <input type="text" class="form-control" id="cpf" placeholder="CPF" name="cpf">
                     <small id="emailHelp" class="form-text text-muted">Use apenas informações fantasia, não coloque seus dados neste site, é apenas um projeto.</small>
                 </div>
 
+                <span class="text-danger"><?= isset($erros['nome']) ? $erros['nome'] : '' ?></span>
                 <div class="form-group"> <!-- CPF -->
-                    <span class="text-danger"><?= isset($erros['nome']) ? $erros['nome'] : '' ?></span>
                     <label for="text">Nome de Usuario</label>
                     <input type="text" class="form-control" id="nomeusuario" placeholder="Nome de Usuario" name="nomeusuario">
                     <small id="" class="form-text text-muted">Use apenas informações fantasia, não coloque seus dados neste site, é apenas um projeto.</small>
                 </div>
 
-                <span class="text-danger"><?= isset($erros['aniversario']) ? $erros['aniversario'] : '' ?></span>
+                <span class="text-danger"><?= isset($erros['aniversario']) ? $erros['aniversario'] : '' ?></span> <br>
                 <label for="nascimento"><strong>Data de nascimento:</strong></label> <br>
                 <input type="date" name="nascimento" id="nascimento">
-
+                <br>
                 <span class="text-danger"><?= isset($erros['tipo']) ? $erros['tipo'] : '' ?></span>
                 <p>Tipo de cadastro</p>
                 <label for="pastor">Pastor</label>
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //verifica se o formulario existe
                 <label for="membro">Membro</label>
                 <input type="radio" name="tipo" id="membro" value="2">
                 <br>
-                
+
                 <button type="submit" class="btn btn-primary">Cadastrar</button><!-- Enviar -->
                 <button type="submit" class="btn btn-primary"><a href="login.php">Voltar ao login</a></button><!-- Enviar -->
 
