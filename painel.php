@@ -14,13 +14,27 @@ if ($dadoss['tipo'] == 2) {
     header("Location: login.php");
 }
 
-if ( isset($_POST['tipo_formulario'])  == 1) { //verifica se o formulario existe
+if (isset($_POST['tipo_formulario'])) //verifica o tipo do formulario se sera o de formulario
+    $tipo_formulario = $_POST['tipo_formulario'];// 1 adicionar membro, 2 mudar informações
 
-    require 'adicionar_membro.php';
-    if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
-        $erros =  adicionarUsuario($_POST);
+if (isset($tipo_formulario) ) {
+    if ($tipo_formulario  == 1) { //verifica se o formulario existe
+    
+        require 'adicionar_membro.php';
+        if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
+            $erros =  adicionarUsuario($_POST);
+        }
+    }
+    
+    if ($tipo_formulario == 2) { //verifica se o formulario existe
+        
+        require 'alterar_membro.php';
+        if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
+            $erros =  alterar($_POST);
+        }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -69,10 +83,8 @@ if ( isset($_POST['tipo_formulario'])  == 1) { //verifica se o formulario existe
         <div class="row">
             <div class="col-3">
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Painel principal</a>
                     <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Seus membros</a>
                     <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Adicionar Membros</a>
-                    <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Editar/Remover</a>
                 </div>
             </div>
             <div class="col-9">
@@ -178,7 +190,8 @@ if ( isset($_POST['tipo_formulario'])  == 1) { //verifica se o formulario existe
                                             Mudar informações
                                         </button>
                                         <div style="padding: 10px;" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <form action="alterar_membro.php" enctype="multipart/form-data" method="post">
+                                            <form action="" enctype="multipart/form-data" method="post">
+                                                <input type="hidden" name="tipo_formulario" value="2">
                                                 <input type="hidden" name="fotoatual" value="<?php echo $foto ?>">
                                                 <input type="hidden" name="gestor" value="<?php echo $gestor ?>">
                                                 <input type="hidden" name="identificador" value="<?php echo $CPF ?>">
@@ -285,9 +298,7 @@ if ( isset($_POST['tipo_formulario'])  == 1) { //verifica se o formulario existe
                         </form>
 
                     </div>
-                    <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
-
-                    </div>
+                    
                 </div>
             </div>
         </div>

@@ -1,17 +1,14 @@
 <?php
-/* include("conexao.php");
+
+include("conexao.php");
 include("protect.php");
-
-$gestor = $_SESSION['email']; //recebe o usuario */
-
-
 
 function adicionarUsuario($formulario)
 {
     include("conexao.php");
     include("protect.php");
 
-    $gestor = $_SESSION['email']; //recebe o usuario
+    $gestor = $_SESSION['email']; //recebe o usuario administrador
 
     $nome = $formulario['nome']; //recebe nome
     $data_nasc = $formulario['aniversario']; //recebe data
@@ -20,8 +17,6 @@ function adicionarUsuario($formulario)
     $data_batism_esp = $formulario['data_batism_esp']; //recebe data
     $arquivo = $_FILES["foto"]; //recebe o arquivo
     $cpf = $formulario['cpf']; //recebe cpf
-
-
 
     if (isset($formulario['situacao'])) {
         $situacao = $formulario['situacao'];

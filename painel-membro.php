@@ -13,6 +13,11 @@ if ($dadoss['tipo'] == 1) {
     header("Location: login.php");
 }
 
+require 'alterar_membro.php';
+if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
+    $erros = alterar($_POST);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -160,7 +165,7 @@ if ($dadoss['tipo'] == 1) {
                                         Mudar informações
                                     </button>
                                     <div style="padding: 10px;" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <form action="alterar_membro.php" enctype="multipart/form-data" method="post">
+                                        <form action="" enctype="multipart/form-data" method="post">
                                             <input type="hidden" name="fotoatual" value="<?php echo $foto ?>">
                                     
                                             <input type="hidden" name="identificador" value="<?php echo $CPF ?>">
