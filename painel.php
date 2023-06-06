@@ -1,6 +1,8 @@
 <?php
 include("conexao.php");
 include("protect.php");
+
+
 $cpf = $_SESSION['cpf'];
 $sql_codigo_membros = "SELECT * FROM usuarios WHERE cpf = '$cpf'";
 $sql_executar_membros = $mysqli->query($sql_codigo_membros);
@@ -12,10 +14,14 @@ if ($dadoss['tipo'] == 2) {
     header("Location: login.php");
 }
 
+if ( isset($_POST['tipo_formulario'])  == 1) { //verifica se o formulario existe
+
+    require 'adicionar_membro.php';
+    if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
+        $erros =  adicionarUsuario($_POST);
+    }
+}
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -57,7 +63,7 @@ if ($dadoss['tipo'] == 2) {
                 <a class="nav-link active" href="#"><?php echo $_SESSION['nome'] ?></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="logout.php">Sair</a>
+                <a href="logout.php">sair</a>
             </li>
         </ul>
         <div class="row">
@@ -72,7 +78,7 @@ if ($dadoss['tipo'] == 2) {
             <div class="col-9">
                 <div class="tab-content" id="v-pills-tabContent">
                     <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                        PRIMEIRO <!-- DIGITAR AS LINHAS AQUI -->
+
                     </div>
                     <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
                         <!-- DIGITAR AS LINHAS AQUI -->
@@ -157,12 +163,15 @@ if ($dadoss['tipo'] == 2) {
                                             </p>
                                         </li>
                                     </ul>
+                                    <!-- remover membro -->
+                                    <?php
 
+                                    ?>
                                     <form style="padding: 10px;" action="removermembro.php" method="post">
                                         <input type="hidden" name="remover" value="<?php echo $CPF ?>">
-                                        <input type="hidden" name="funcao" value = 1>
                                         <button type="submit" class="btn btn-primary">Remover membro</button>
                                     </form>
+                                    <!--  -->
 
                                     <div class="dropdown">
                                         <button style="padding: 10px;" class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -204,26 +213,31 @@ if ($dadoss['tipo'] == 2) {
                     </div>
                     <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
                         <!-- DIGITAR AS LINHAS AQUI -->
-                        <form action="adicionar_membro.php" method="post" enctype="multipart/form-data">
+                        <form action="" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="tipo_formulario" value="1">
                             <ul>
-                                <span class="text-danger"><?= isset($erros['foto']) ? $erros['foto'] : '' ?></span>
+                                <span class="text-danger"><?= isset($erros['arquivo']) ? $erros['arquivo'] : '' ?></span>
                                 <li>
                                     <label for="foto"><strong>Foto 3x4:</strong></label>
                                     <input type="file" name="foto" id="foto">
 
                                 </li>
+                                <span class="text-danger"><?= isset($erros['nome']) ? $erros['nome'] : '' ?></span>
                                 <li>
                                     <label for="nome"><strong>Nome:</strong></label>
                                     <input type="text" name="nome" id="nome">
                                 </li>
+                                <span class="text-danger"><?= isset($erros['cpf']) ? $erros['cpf'] : '' ?></span>
                                 <li>
                                     <label for="cpf"><strong>CPF</strong></label>
                                     <input type="text" name="cpf" id="cpf">
                                 </li>
+                                <span class="text-danger"><?= isset($erros['nascimento']) ? $erros['nascimento'] : '' ?></span>
                                 <li>
                                     <label for="aniversario"><strong>Data de Nascimento:</strong></label>
                                     <input type="date" name="aniversario" id="aniversario">
                                 </li>
+                                <span class="text-danger"><?= isset($erros['sexo']) ? $erros['sexo'] : '' ?></span>
                                 <li>
                                     <p><strong>Sexo:</strong></p>
                                     <p>
@@ -236,18 +250,22 @@ if ($dadoss['tipo'] == 2) {
                                     </p>
 
                                 </li>
+                                <span class="text-danger"><?= isset($erros['data_conversao']) ? $erros['data_conversao'] : '' ?></span>
                                 <li>
                                     <label for="data_conversao"><strong>Data de conversão</strong></label>
                                     <input type="date" name="data_conversao" id="data_conversao">
                                 </li>
+                                <span class="text-danger"><?= isset($erros['data_batism_aguas']) ? $erros['data_batism_aguas'] : '' ?></span>
                                 <li>
                                     <label for="data_batism_agua"><strong>Data de batismo nas águas:</strong></label>
                                     <input type="date" name="data_batism_agua" id="data_batism_agua">
                                 </li>
+                                <span class="text-danger"><?= isset($erros['data_batism_esp']) ? $erros['data_batism_esp'] : '' ?></span>
                                 <li>
                                     <label for="data_batism_esp"><strong>Data de batismo com espirito santo:</strong></label>
                                     <input type="date" name="data_batism_esp" id="data_batism_esp">
                                 </li>
+                                <span class="text-danger"><?= isset($erros['situacao']) ? $erros['situacao'] : '' ?></span>
                                 <li>
                                     <p><strong>Situação:</strong></p>
                                     <p>
@@ -268,7 +286,7 @@ if ($dadoss['tipo'] == 2) {
 
                     </div>
                     <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
-                        QUARTO <!-- DIGITAR AS LINHAS AQUI -->
+
                     </div>
                 </div>
             </div>

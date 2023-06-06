@@ -1,38 +1,67 @@
 <?php
-include("conexao.php");
+/* include("conexao.php");
 include("protect.php");
 
-$funcao = $_POST['funcao'];
-
-if ($funcao == 0) {
-    
-}
+$gestor = $_SESSION['email']; //recebe o usuario */
 
 
-function adicionar_membro(){
+
+function adicionarUsuario($formulario)
+{
     include("conexao.php");
+    include("protect.php");
+
     $gestor = $_SESSION['email']; //recebe o usuario
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nome = $_POST['nome'];
-    $cpf = $_POST['cpf'];
-    $data_nasc = $_POST['aniversario'];
-    $sexo = $_POST['sexo'];
-    $data_conv = $_POST['data_conversao'];
-    $data_batism_agua = $_POST['data_batism_agua'];
-    $data_batism_esp = $_POST['data_batism_esp'];
-    $situacao = $_POST['situacao'];
+    $nome = $formulario['nome']; //recebe nome
+    $data_nasc = $formulario['aniversario']; //recebe data
+    $data_conv = $formulario['data_conversao']; //recebe data
+    $data_batism_agua = $formulario['data_batism_agua']; //recebe data
+    $data_batism_esp = $formulario['data_batism_esp']; //recebe data
     $arquivo = $_FILES["foto"]; //recebe o arquivo
+    $cpf = $formulario['cpf']; //recebe cpf
+
+
+
+    if (isset($formulario['situacao'])) {
+        $situacao = $formulario['situacao'];
+    } else {
+        $situacao = '';
+    }
+
+
+    if (isset($formulario['sexo'])) {
+        $sexo = $formulario['sexo'];
+    } else {
+        $sexo = '';
+    }
+
+
+
 
     $erros = [];
+    //verifica se as variaveis tem tamanho menor que 0, caso sim empilha um erro
     if (strlen($nome) == 0)
         $erros['nome'] = 'campo de nome vazio';
-    if (strlen($cpf) == 0)
+    if (strlen($cpf) == 0) {
         $erros['cpf'] = 'campo de cpf vazio';
+    } else {
+        //verifica se o cpf ja esta em uso
+        $query = "SELECT * FROM membros WHERE cpf = '$cpf'";
+        $sql_query = $mysqli->query($query);
+        if ($sql_query->num_rows > 0)
+            $erros['cpf'] = 'Este cpf ja esta em uso';
+
+        $query = "SELECT * FROM usuarios WHERE cpf = '$cpf'";
+        $sql_query = $mysqli->query($query);
+        if ($sql_query->num_rows > 0)
+            $erros['cpf'] = 'Este cpf ja esta em uso';
+        //--------------------------------------------------     
+    }
     if (strlen($data_nasc) == 0)
         $erros['nascimento'] = 'campo de data de nascimento vazio';
-    if (strlen($sexo) == 0)
-        $erros['data_conversao'] = 'campo de sexo vazio';
+    if (strlen($sexo || !isset($sexo)) == 0)
+        $erros['sexo'] = 'campo de sexo vazio';
     if (strlen($data_conv) == 0)
         $erros['data_conversao'] = 'campo de data de conversão vazio';
     if (strlen($data_batism_agua) == 0)
@@ -41,63 +70,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $erros['data_batism_esp'] = 'campo de data de batismo no espirito santo vazio';
     if (strlen($situacao) == 0)
         $erros['situacao'] = 'campo de situação vazio';
-    if ($arquivo == '')
-        $erros['foto'] = 'campo de foto vazio';
+    if (strlen($arquivo['name'])  == 0)
+        $erros['arquivo'] = 'campo de foto vazio';
+    //------------------------------------------------------------------------------------
+
+    if (!empty($erros)) return $erros; //caso exista erros retorna para o painel a variavel $erros para apresentar um span na tela
 
     if (false == isset($erros[0])) // se não existir ao menos um erro. equivalente a !empty($erros)
     {
-        
         $nomedoArquivo = $arquivo['name']; //revebe o nome do arquivo
         $extensao = strtolower(pathinfo($nomedoArquivo, PATHINFO_EXTENSION)); //recebe a extensão do arquivo
         $novoNome = uniqid(); // recebe o novo nome do arquivo 
         $pasta = 'fotos/'; //recebe a pasta onde vai ser salvo
 
         if ($extensao != "png" && $extensao != "jpg" && $extensao != "jpeg" && $extensao != "") { //verifica o formato do arquivo
-            $erros['foto'] = 'o formato de foto não é suportado';
-        }
 
-        $path = $pasta . $novoNome . "." . $extensao; //recebe a pasta, o novo nome do arquivo e a extensão
-        if (move_uploaded_file($arquivo["tmp_name"], $path)) { //move o arquivo para a pasta
-            $mysqli->query("INSERT INTO membros VALUES('$gestor', '$path', '$nome', '$cpf', '$data_nasc', '$sexo', '$data_conv', '$data_batism_agua', '$data_batism_esp', '$situacao')");
-            header('Location: ' . $_SERVER['HTTP_REFERER']);
-            exit();
+            $erros['foto'] = 'o formato de foto não é suportado'; //caso não seja um formato suportado retorna esse erro
+            return $erros;
         } else {
-            $erros['foto'] = 'Tamanho de arquivo grande de mais';
+            $path = $pasta . $novoNome . "." . $extensao; //recebe a pasta, o novo nome do arquivo e a extensão
+            if (move_uploaded_file($arquivo["tmp_name"], $path)) { //move o arquivo para a pasta
+                echo '<br>salvou a foto';
+                $mysqli->query("INSERT INTO membros VALUES('$gestor', '$path', '$nome', '$cpf', '$data_nasc', '$sexo', '$data_conv', '$data_batism_agua', '$data_batism_esp', '$situacao')");
+                header('Location: painel.php');
+                exit();
+            } else {
+                $erros['foto'] = 'Tamanho de arquivo grande de mais';
+                return $erros;
+            }
         }
-
-
     }
 }
-}
-
-/* if (!isset($_FILES["foto"])) { //verifica se existe algo enviado no formulario
-    $path = 'fotos/sem-foto.png';
-    $mysqli->query("INSERT INTO membros VALUES('$gestor', '$path', '$nome', '$cpf', '$data_nasc', '$sexo', '$data_conv', '$data_batism_agua', '$data_batism_esp', '$situacao')");
-    header('Location: ' . $_SERVER['HTTP_REFERER']);
-    exit();
-} else {
-    $arquivo = $_FILES["foto"]; //recebe o arquivo
-    $nomedoArquivo = $arquivo['name']; //revebe o nome do arquivo
-    $extensao = strtolower(pathinfo($nomedoArquivo, PATHINFO_EXTENSION)); //recebe a extensão do arquivo
-    $novoNome = uniqid(); // recebe o novo nome do arquivo 
-    $pasta = 'fotos/'; //recebe a pasta onde vai ser salvo */
-
-
-    
-
-    /* if ($extensao == "") {
-        $path = $pasta . "imagempadrao.png";
-        $mysqli->query("INSERT INTO membros VALUES('$gestor', '$path', '$nome', '$cpf', '$data_nasc', '$sexo', '$data_conv', '$data_batism_agua', '$data_batism_esp', '$situacao')");
-        header('Location: ' . $_SERVER['HTTP_REFERER']);
-        exit();
-    } else {
-        $path = $pasta . $novoNome . "." . $extensao; //recebe a pasta, o novo nome do arquivo e a extensão
-        if (move_uploaded_file($arquivo["tmp_name"], $path)) { //move o arquivo para a pasta
-            $mysqli->query("INSERT INTO membros VALUES('$gestor', '$path', '$nome', '$cpf', '$data_nasc', '$sexo', '$data_conv', '$data_batism_agua', '$data_batism_esp', '$situacao')");
-            header('Location: ' . $_SERVER['HTTP_REFERER']);
-            exit();
-        } else {
-            die("FALHA AO ENVIAR O ARQUIVO");
-        }
-    } */
-

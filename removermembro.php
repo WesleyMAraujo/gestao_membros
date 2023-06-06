@@ -1,9 +1,7 @@
 <?php 
 include("conexao.php");
 include("protect.php");
-
-$remover = $_POST["remover"];
-
-$mysqli->query("DELETE FROM `membros` WHERE cpf LIKE $remover");
-
+$cpfRemover = $mysqli->real_escape_string($_POST["remover"]);
+$query = "DELETE FROM membros WHERE cpf = $cpfRemover";
+$mysqli->query($query);
 header("Location:painel.php");

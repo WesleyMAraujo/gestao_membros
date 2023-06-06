@@ -1,4 +1,6 @@
 <?php 
+
+echo 'chegou aq';
 if (!isset($_SESSION)) {//cria uma sessao caso n exista
     session_start();
 }
